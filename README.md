@@ -16,6 +16,8 @@ If there is related infringement or violation of related regulations, please con
   - [git merge & git rebase](#1.5)
   - [git stash](#1.6)
   - [git reset](#1.7)
+  - [Pull Request](#1.8)
+  - [.gitignore](#1.9)
 - [Git LFS](#2)
   - [.gitattributes](#2.1)
   - [指令](#2.2)
@@ -250,6 +252,34 @@ $ git reset HEAD^                            # 回到上次提交前的版本
 [GitHub 發 PR (pull request) 流程](https://w3c.hexschool.com/git/cc7d70b7)
 
 [合併拉取請求（Merging a pull request）](https://juejin.cn/post/6844903605602877454)
+
+<h2 id="1.9">.gitignore</h2>
+
+設定某些檔案不會放入Git裡面
+
+- 比較機密的檔案
+- 一些程式編譯的中間檔或暫存檔，因為每次只要一編譯就等於產生一次新的檔案，對專案來說通常沒有實質的利用價值
+
+有兩種方法可以忽略檔案：
+
+- 將絕對路徑放在工作目錄根目錄下的 `.gitignore` 檔案
+
+- 在某子目錄中建立 `.gitignore` 檔案，並忽略與此 `.gitignore` 相關的檔案
+
+咦？怎麼沒效果？ --> 有寫 `.gitignore`，但 add 後還是有 modified 狀態
+
+- 因為這些想被忽略檔案，在 `.gitignore` 之前就存在了。`.gitignore` 檔案設定的規則，只對在規則設定之後的有效，那些已經存在的檔案就像既得利益者一樣，這些規則是對他們沒有效果的
+
+- 如果想套用 `.gitignore` 的規則，就必須先使用 `git rm --cached` 指令把這些既得利益者請出 Git，移出 Git 控管之後，它就會開始會被忽略
+
+該如何清除忽略的檔案？
+
+- 如果想要一口氣清除那些已經被忽略的檔案，可以使用 `git clean` 指令並配合 `-X` 參數：
+- 那個額外加上的 `-f` 參數是指強制刪除的意思
+
+  ```git
+  $ git clean -fX
+  ```
 
 <h1 id="2">Git LFS</h1>
 
