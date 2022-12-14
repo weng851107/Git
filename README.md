@@ -18,6 +18,7 @@ If there is related infringement or violation of related regulations, please con
   - [git reset](#1.7)
   - [Pull Request](#1.8)
   - [.gitignore](#1.9)
+  - [生成patch和應用patch](#1.10)
 - [Git LFS](#2)
   - [.gitattributes](#2.1)
   - [指令](#2.2)
@@ -280,6 +281,92 @@ $ git reset HEAD^                            # 回到上次提交前的版本
   ```git
   $ git clean -fX
   ```
+
+<h2 id="1.10">生成patch和應用patch</h2>
+
+patch和diff的區別：
+
+- git diff生成的UNIX標準補丁.diff文件
+  - .diff文件只是記錄文件改變的內容，不帶有commit記錄信息,多個commit可以合併成一個diff文件
+
+- git format-patch生成的Git專用.patch文件
+  - .patch文件帶有記錄文件改變的內容，也帶有commit記錄信息,每個commit對應一個patch文件
+
+創建patch文件：
+
+- 兩個commit間的修改（包含兩個commit）
+
+    ```git
+    $ git format-patch [commit sha1 id]..[commit sha1 id]
+    ```
+
+- 單個commit
+
+    ```git
+    $ git format-patch [commit sha1 id] -1
+    ```
+
+- 某次提交之前的全部提交（不包含該commit）
+
+    ```git
+    $ git format-patch [commit sha1 id]
+    ```
+
+- 某次提交（含）之前的幾次提交
+
+    ```git
+    $ git format-patch 【commit sha1 id】-n
+    ```
+
+創建diff文件：
+
+```git
+$ git diff  [commit sha1 id] [commit sha1 id] >  [diff文件名]
+```
+
+應用patch和diff：
+
+- 檢查patch文件
+
+    ```git 
+    $ git apply --stat [path/to/xxx.patch]
+    $ git apply --stat [path/to/xxx.diff]
+    ```
+
+- 查看是否能正常打入
+
+    ```git
+    $ git apply --check [path/to/xxx.patch]
+    $ git apply --check [path/to/xxx.diff]
+    ```
+
+打入patch/diff：
+
+```git
+$ git apply [path/to/xxx.patch]
+$ git apply [path/to/xxx.diff]
+
+$ git am [path/to/xxx.diff]
+```
+
+衝突的解決：
+
+1. 自動合入 patch 中不衝突的代碼改動，同時保留衝突的部分，同時會生成後綴為 `.rej` 的文件，保存沒有合併進去的部分的內容，可以參考這個進行沖突解決
+
+    ```git
+    $ git  apply --reject  xxxx.patch
+    ```
+
+2. 解決完衝突後刪除後綴為 `.rej` 的文件，並執行`git add .`添加改動到暫存區.
+
+3. 接著執行`git am --resolved`或者`git am --continue`
+
+回退打入patch的動作，還原到操作前的狀態：
+
+```git
+$ git am --abort
+```
+
 
 <h1 id="2">Git LFS</h1>
 
